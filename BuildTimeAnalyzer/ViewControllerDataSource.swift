@@ -29,7 +29,7 @@ class ViewControllerDataSource {
     }
 
     private var originalData = [CompileMeasure]()
-    private var processedData = [CompileMeasure]()
+    var processedData = [CompileMeasure]()
 
     func resetSourceData(newSourceData: [CompileMeasure]) {
         originalData = newSourceData

@@ -48,6 +48,15 @@ class ViewController: NSViewController {
 
         tableView.tableColumns[0].sortDescriptorPrototype = NSSortDescriptor(key: CompileMeasure.Order.time.rawValue, ascending: true)
         tableView.tableColumns[1].sortDescriptorPrototype = NSSortDescriptor(key: CompileMeasure.Order.filename.rawValue, ascending: true)
+        tableView.tableColumns[3].sortDescriptorPrototype = NSSortDescriptor(key: CompileMeasure.Order.code.rawValue, ascending: true, comparator: { (s1, s2) -> ComparisonResult in
+            return (s1 as! NSString).compare(s2 as! String, options: .numeric)
+        })
+
+        tableView.sortDescriptors = [
+            tableView.tableColumns[3].sortDescriptorPrototype!,
+            tableView.tableColumns[1].sortDescriptorPrototype!,
+        ]
+        dataSource.sortDescriptors = tableView.sortDescriptors
 
         NotificationCenter.default.addObserver(self, selector: #selector(windowWillClose(notification:)), name: NSWindow.willCloseNotification, object: nil)
     }
@@ -215,6 +224,9 @@ class ViewController: NSViewController {
         dataSource.resetSourceData(newSourceData: result)
         tableView.reloadData()
         
+
+        CopyToPasteboard(dataSource.processedData)
+
         if didComplete {
             completeProcessorUpdate(didCancel: didCancel)
         }
@@ -321,4 +333,25 @@ extension ViewController: ProjectSelectionDelegate {
     func didSelectProject(with database: XcodeDatabase) {
         processLog(with: database)
     }
+}
+
+
+
+
+
+func CopyToPasteboard(_ measures: [CompileMeasure]) {
+    var string = ""
+
+    for measure in measures {
+        let method = measure.code
+            .replacingOccurrences(of: "instance method ", with: "")
+            .trimmingCharacters(in: .newlines)
+        let time = String(format: "%.3f", measure.time)
+
+        string += method + "\t" + time + "\n"
+    }
+
+    let pasteboard = NSPasteboard.general
+    pasteboard.declareTypes([.string], owner: nil)
+    pasteboard.setString(string, forType: .string)
 }

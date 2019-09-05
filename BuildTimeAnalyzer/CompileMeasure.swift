@@ -18,6 +18,7 @@ import Foundation
     public enum Order: String {
         case filename
         case time
+        case code
     }
 
     var fileAndLine: String {
@@ -81,5 +82,13 @@ import Foundation
         default:
             return code
         }
+    }
+
+    override var description: String {
+        let address = String(describing: Unmanaged.passUnretained(self).toOpaque())
+        return "\n<CompileMeasure " +
+            address + ": " +
+            timeString + " " +
+            code.trimmingCharacters(in: .newlines) + ">\n"
     }
 }
