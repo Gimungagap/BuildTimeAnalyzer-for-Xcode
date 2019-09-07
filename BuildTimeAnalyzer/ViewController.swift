@@ -346,7 +346,7 @@ func CopyToPasteboard(_ measures: [CompileMeasure]) {
         let method = measure.code
             .replacingOccurrences(of: "instance method ", with: "")
             .trimmingCharacters(in: .newlines)
-        let time = String(format: "%.3f", measure.time)
+        let time = String(format: "%.3f", measure.time).replacingOccurrences(of: ".", with: ",")
 
         string += method + "\t" + time + "\n"
     }

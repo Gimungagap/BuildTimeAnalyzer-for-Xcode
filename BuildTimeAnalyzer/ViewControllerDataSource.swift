@@ -55,6 +55,9 @@ class ViewControllerDataSource {
         var newProcessedData = aggregateIfNeeded(originalData)
         newProcessedData = applySortingIfNeeded(newProcessedData)
         newProcessedData = applyFilteringIfNeeded(newProcessedData)
+        newProcessedData = newProcessedData.filter({ (measure) -> Bool in
+            return measure.time >= 1
+        })
 
         processedData = newProcessedData
     }
